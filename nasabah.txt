@@ -1,0 +1,3 @@
+REK829,Eren Jaeger,5000090
+REK225,Shinichi Kudo,1500000
+REK131,Nobita,700000
