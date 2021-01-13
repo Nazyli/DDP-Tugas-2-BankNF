@@ -1,7 +1,14 @@
 import random
 import string
+import os
+from subprocess import call
 from prettytable import PrettyTable
 # python -m pip install -U prettytable
+
+
+def clear():
+    _ = call('clear' if os.name == 'posix' else 'cls')
+
 
 def fungsi_file(namafile, operator, data=None):
     with open(namafile, operator) as file:
@@ -10,6 +17,7 @@ def fungsi_file(namafile, operator, data=None):
         elif operator == 'r':
             data = file.readlines()
     return data
+
 
 def inputNum(message):
     while True:
@@ -20,8 +28,10 @@ def inputNum(message):
         except ValueError:
             print("Hanya menerima input berupa angka!")
 
+
 def randomKey(awalan):
     return awalan + ''.join(random.choice(string.digits) for _ in range(3))
+
 
 def bukaRekening(namafile):
     norek = randomKey("REK")
@@ -30,6 +40,7 @@ def bukaRekening(namafile):
     data = norek + ',' + nama + ',' + str(saldo) + '\n'
     fungsi_file(namafile, 'a+', data)
     return "Pembukaan rekening dengan nomor " + norek + " atas nama " + nama + " berhasil."
+
 
 def cekData(namafile, no, nominal=0, transaksi='Setor'):
     notFind = True
@@ -48,19 +59,21 @@ def cekData(namafile, no, nominal=0, transaksi='Setor'):
             data[i] = ls[0] + ',' + ls[1] + ',' + str(ls[2]) + '\n'
             break
     if (notFind):
-      return data, "Nomor rekening " + no + " tidak terdaftar. Transaksi gagal"
+        return data, "Nomor rekening " + no + " tidak terdaftar. Transaksi gagal"
     else:
-      return data, ""
+        return data, ""
+
 
 def editSaldo(namafile, transaksi):
     no = input("Masukkan nomor rekening: ").upper()
-    nominal = inputNum("Masukkan nominal yang akan di"+transaksi.lower+": ")
-    data, error = cekData(namafile, no, nominal, transaksi)
-    if (error != ""):
-        return error
+    nominal = inputNum("Masukkan nominal yang akan di"+transaksi.lower()+": ")
+    data, err = cekData(namafile, no, nominal, transaksi)
+    if (err != ""):
+        return err
     else:
         fungsi_file(namafile, 'w+', data)
         return transaksi + " tunai sebesar " + str(nominal) + " di rekening " + no + " berhasil."
+
 
 def transferProses(nasabah, transfer):
     idTRF = randomKey("TRF")
@@ -77,7 +90,7 @@ def transferProses(nasabah, transfer):
         fungsi_file(nasabah, 'w+', updateSaldoSumber)
         updateSaldoTujuan, _ = cekData(nasabah, noTujuan, nominal)
         fungsi_file(nasabah, 'w+', updateSaldoTujuan)
-        trfData = idTRF+','+noSumber +','+noTujuan+','+str(nominal)+'\n'
+        trfData = idTRF+','+noSumber + ','+noTujuan+','+str(nominal)+'\n'
         fungsi_file(transfer, 'a+', trfData)
         return "Transfer sebesar {0} dari rekening {1} ke rekening {2} berhasil".format(nominal, noSumber, noTujuan)
 
@@ -112,6 +125,7 @@ while True:
         '\n***** SELAMAT DATANG DI NF BANK *****\nMENU:\n[1] Buka rekening\n[2] Setoran tunai\n[3] Tarik tunai\n[4] Transfer\n[5] Lihat daftar transfer\n[6] Keluar\n'
     )
     menu = inputNum("Masukkan menu pilihan Anda: ")
+    clear()
     if menu == 1:
         print('*** BUKA REKENING ***')
         pesan = bukaRekening(nasabah)
@@ -129,7 +143,7 @@ while True:
         pesan = showTransfer(nasabah, transfer)
     elif menu == 6:
         break
-        pesan = "Terima kasih atas kunjungan Anda..."
     else:
         pesan = "Pilihan Anda tidak terdaftar. Ulangi"
     print(pesan + "\n")
+print("\nTerima kasih atas kunjungan Anda...\n")
