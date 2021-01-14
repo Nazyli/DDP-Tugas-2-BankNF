@@ -3,7 +3,6 @@ import string
 import os
 from subprocess import call
 from prettytable import PrettyTable
-# python -m pip install -U prettytable
 
 
 def clear():
@@ -117,12 +116,28 @@ def showTransfer(nasabah, transfer):
         return ""
 
 
+def showProfil(nasabah):
+    no = input("Masukkan nomor rekening nasabah: ").upper()
+    data, err = cekData(nasabah, no)
+    if (err != ""):
+        return "Nomor rekening nasabah tidak terdaftar."
+    else:
+        for i in range(len(data)):
+            ls = data[i].strip().split(',')
+            if(ls[0] == no):
+                print("No Rekening \t:", ls[0])
+                print("Nama Nasabah \t:", ls[1])
+                print("Nominal    \t:", ls[2])
+                break
+        return ""
+
+
 nasabah = 'nasabah.txt'
 transfer = 'transfer.txt'
 pesan = ""
 while True:
     print(
-        '\n***** SELAMAT DATANG DI NF BANK *****\nMENU:\n[1] Buka rekening\n[2] Setoran tunai\n[3] Tarik tunai\n[4] Transfer\n[5] Lihat daftar transfer\n[6] Keluar\n'
+        '\n***** SELAMAT DATANG DI NF BANK *****\nMENU:\n[1] Buka rekening\n[2] Setoran tunai\n[3] Tarik tunai\n[4] Transfer\n[5] Lihat daftar transfer\n[6] Profil Nasabah\n[7] Keluar\n'
     )
     menu = inputNum("Masukkan menu pilihan Anda: ")
     clear()
@@ -142,6 +157,9 @@ while True:
         print('*** LIHAT DATA TRANSFER ***')
         pesan = showTransfer(nasabah, transfer)
     elif menu == 6:
+        print('*** LIHAT PROFIL NASABAH ***')
+        pesan = showProfil(nasabah)
+    elif menu == 7:
         break
     else:
         pesan = "Pilihan Anda tidak terdaftar. Ulangi"
